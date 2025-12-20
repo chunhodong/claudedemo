@@ -27,8 +27,7 @@ public class ProductController {
 
     @Operation(summary = "전체 상품 조회", description = "등록된 모든 상품을 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = ProductResponse.class)))
+            @ApiResponse(responseCode = "200", description = "조회 성공")
     })
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getAll() {
@@ -37,10 +36,8 @@ public class ProductController {
 
     @Operation(summary = "상품 단건 조회", description = "ID로 특정 상품을 조회합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(hidden = true)))
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
     })
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getById(
@@ -51,38 +48,24 @@ public class ProductController {
 
     @Operation(summary = "상품 생성", description = "새로운 상품을 등록합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "생성 성공",
-                    content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "409", description = "판매자 ID 중복",
-                    content = @Content(schema = @Schema(hidden = true)))
+            @ApiResponse(responseCode = "201", description = "생성 성공"),
+            @ApiResponse(responseCode = "409", description = "판매자 ID 중복")
     })
     @PostMapping
-    public ResponseEntity<ProductResponse> create(
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "상품 생성 정보",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = ProductRequest.class)))
-            @RequestBody ProductRequest request) {
+    public ResponseEntity<ProductResponse> create(@RequestBody ProductRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(productService.create(request));
     }
 
     @Operation(summary = "상품 수정", description = "기존 상품 정보를 수정합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "수정 성공",
-                    content = @Content(schema = @Schema(implementation = ProductResponse.class))),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(hidden = true))),
-            @ApiResponse(responseCode = "409", description = "판매자 ID 중복",
-                    content = @Content(schema = @Schema(hidden = true)))
+            @ApiResponse(responseCode = "200", description = "수정 성공"),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음"),
+            @ApiResponse(responseCode = "409", description = "판매자 ID 중복")
     })
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponse> update(
             @Parameter(description = "상품 ID", required = true, example = "1")
             @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "상품 수정 정보",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = ProductRequest.class)))
             @RequestBody ProductRequest request) {
         return ResponseEntity.ok(productService.update(id, request));
     }
@@ -90,8 +73,7 @@ public class ProductController {
     @Operation(summary = "상품 삭제", description = "ID로 상품을 삭제합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "204", description = "삭제 성공"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음",
-                    content = @Content(schema = @Schema(hidden = true)))
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
