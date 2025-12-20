@@ -1,4 +1,4 @@
-package com.example.claudedemo.user.application;
+package com.example.claudedemo.product.application;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserRequest {
+public class ProductRequest {
 
     private Long id;
     private String name;
-    private String email;
-    private Integer age;
+    private String sellerId;
+    private Long categoryNumber;
 }
