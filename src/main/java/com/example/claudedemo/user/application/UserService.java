@@ -1,5 +1,6 @@
 package com.example.claudedemo.user.application;
 
+import com.example.claudedemo.user.domain.DuplicateEmailException;
 import com.example.claudedemo.user.domain.User;
 import com.example.claudedemo.user.domain.UserNotFoundException;
 import com.example.claudedemo.user.domain.UserRepository;
@@ -30,6 +31,9 @@ public class UserService {
 
     @Transactional
     public UserResponse create(UserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new DuplicateEmailException(request.getEmail());
+        }
         User user = User.create(request.getName(), request.getEmail(), request.getAge());
         User saved = userRepository.save(user);
         return UserResponse.from(saved);
