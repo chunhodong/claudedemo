@@ -1,8 +1,9 @@
-package com.example.claudedemo.controller;
+package com.example.claudedemo.user.presentation;
 
-import com.example.claudedemo.dto.UserDto;
-import com.example.claudedemo.entity.User;
-import com.example.claudedemo.repository.UserRepository;
+import com.example.claudedemo.user.application.UserRequest;
+import com.example.claudedemo.user.application.UserResponse;
+import com.example.claudedemo.user.infrastructure.UserJpaEntity;
+import com.example.claudedemo.user.infrastructure.UserJpaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ class UserControllerTest {
     private int port;
 
     @Autowired
-    private UserRepository userRepository;
+    private UserJpaRepository userJpaRepository;
 
     private WebTestClient webTestClient;
 
@@ -27,25 +28,25 @@ class UserControllerTest {
         webTestClient = WebTestClient.bindToServer()
                 .baseUrl("http://localhost:" + port)
                 .build();
-        userRepository.deleteAll();
+        userJpaRepository.deleteAll();
     }
 
     @Test
     @DisplayName("전체 사용자 조회")
     void getAll() {
-        userRepository.save(new User("홍길동", "hong@test.com", 30));
-        userRepository.save(new User("김철수", "kim@test.com", 25));
+        userJpaRepository.save(new UserJpaEntity(null, "홍길동", "hong@test.com", 30));
+        userJpaRepository.save(new UserJpaEntity(null, "김철수", "kim@test.com", 25));
 
         webTestClient.get().uri("/api/users")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBodyList(User.class).hasSize(2);
+                .expectBodyList(UserResponse.class).hasSize(2);
     }
 
     @Test
     @DisplayName("단건 사용자 조회")
     void getById() {
-        User saved = userRepository.save(new User("홍길동", "hong@test.com", 30));
+        UserJpaEntity saved = userJpaRepository.save(new UserJpaEntity(null, "홍길동", "hong@test.com", 30));
 
         webTestClient.get().uri("/api/users/" + saved.getId())
                 .exchange()
@@ -58,10 +59,10 @@ class UserControllerTest {
     @Test
     @DisplayName("사용자 생성")
     void create() {
-        UserDto dto = new UserDto(null, "홍길동", "hong@test.com", 30);
+        UserRequest request = new UserRequest(null, "홍길동", "hong@test.com", 30);
 
         webTestClient.post().uri("/api/users")
-                .bodyValue(dto)
+                .bodyValue(request)
                 .exchange()
                 .expectStatus().isCreated()
                 .expectBody()
@@ -72,11 +73,11 @@ class UserControllerTest {
     @Test
     @DisplayName("사용자 수정")
     void update() {
-        User saved = userRepository.save(new User("홍길동", "hong@test.com", 30));
-        UserDto dto = new UserDto(null, "김철수", "kim@test.com", 25);
+        UserJpaEntity saved = userJpaRepository.save(new UserJpaEntity(null, "홍길동", "hong@test.com", 30));
+        UserRequest request = new UserRequest(null, "김철수", "kim@test.com", 25);
 
         webTestClient.put().uri("/api/users/" + saved.getId())
-                .bodyValue(dto)
+                .bodyValue(request)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -86,7 +87,7 @@ class UserControllerTest {
     @Test
     @DisplayName("사용자 삭제")
     void deleteUser() {
-        User saved = userRepository.save(new User("홍길동", "hong@test.com", 30));
+        UserJpaEntity saved = userJpaRepository.save(new UserJpaEntity(null, "홍길동", "hong@test.com", 30));
 
         webTestClient.delete().uri("/api/users/" + saved.getId())
                 .exchange()

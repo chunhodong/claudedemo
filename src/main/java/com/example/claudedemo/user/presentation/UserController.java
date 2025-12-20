@@ -1,8 +1,8 @@
-package com.example.claudedemo.controller;
+package com.example.claudedemo.user.presentation;
 
-import com.example.claudedemo.dto.UserDto;
-import com.example.claudedemo.entity.User;
-import com.example.claudedemo.service.UserService;
+import com.example.claudedemo.user.application.UserRequest;
+import com.example.claudedemo.user.application.UserResponse;
+import com.example.claudedemo.user.application.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,23 +18,23 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAll() {
+    public ResponseEntity<List<UserResponse>> getAll() {
         return ResponseEntity.ok(userService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<User> create(@RequestBody UserDto dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(dto));
+    public ResponseEntity<UserResponse> create(@RequestBody UserRequest request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.create(request));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody UserDto dto) {
-        return ResponseEntity.ok(userService.update(id, dto));
+    public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody UserRequest request) {
+        return ResponseEntity.ok(userService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

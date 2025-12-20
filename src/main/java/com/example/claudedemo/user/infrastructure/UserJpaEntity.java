@@ -1,8 +1,8 @@
-package com.example.claudedemo.entity;
+package com.example.claudedemo.user.infrastructure;
 
+import com.example.claudedemo.user.domain.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User {
+public class UserJpaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,11 +24,19 @@ public class User {
 
     private Integer age;
 
-    @Builder
-    public User(String name, String email, Integer age) {
+    public UserJpaEntity(Long id, String name, String email, Integer age) {
+        this.id = id;
         this.name = name;
         this.email = email;
         this.age = age;
+    }
+
+    public static UserJpaEntity from(User user) {
+        return new UserJpaEntity(user.getId(), user.getName(), user.getEmail(), user.getAge());
+    }
+
+    public User toDomain() {
+        return new User(id, name, email, age);
     }
 
     public void update(String name, String email, Integer age) {

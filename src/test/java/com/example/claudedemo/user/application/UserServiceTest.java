@@ -1,8 +1,8 @@
-package com.example.claudedemo.service;
+package com.example.claudedemo.user.application;
 
-import com.example.claudedemo.dto.UserDto;
-import com.example.claudedemo.entity.User;
-import com.example.claudedemo.repository.UserRepository;
+import com.example.claudedemo.user.domain.User;
+import com.example.claudedemo.user.domain.UserNotFoundException;
+import com.example.claudedemo.user.domain.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,11 +32,11 @@ class UserServiceTest {
     @Test
     @DisplayName("전체 사용자 조회")
     void findAll() {
-        User user1 = new User("홍길동", "hong@test.com", 30);
-        User user2 = new User("김철수", "kim@test.com", 25);
+        User user1 = new User(1L, "홍길동", "hong@test.com", 30);
+        User user2 = new User(2L, "김철수", "kim@test.com", 25);
         given(userRepository.findAll()).willReturn(Arrays.asList(user1, user2));
 
-        List<User> users = userService.findAll();
+        List<UserResponse> users = userService.findAll();
 
         assertThat(users).hasSize(2);
         assertThat(users.get(0).getName()).isEqualTo("홍길동");
@@ -45,11 +45,10 @@ class UserServiceTest {
     @Test
     @DisplayName("단건 사용자 조회 - 성공")
     void findById_success() {
-        User user = new User("홍길동", "hong@test.com", 30);
-        user.setId(1L);
+        User user = new User(1L, "홍길동", "hong@test.com", 30);
         given(userRepository.findById(1L)).willReturn(Optional.of(user));
 
-        User found = userService.findById(1L);
+        UserResponse found = userService.findById(1L);
 
         assertThat(found.getName()).isEqualTo("홍길동");
         assertThat(found.getEmail()).isEqualTo("hong@test.com");
@@ -61,19 +60,18 @@ class UserServiceTest {
         given(userRepository.findById(999L)).willReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.findById(999L))
-                .isInstanceOf(RuntimeException.class)
+                .isInstanceOf(UserNotFoundException.class)
                 .hasMessageContaining("User not found");
     }
 
     @Test
     @DisplayName("사용자 생성")
     void create() {
-        UserDto dto = new UserDto(null, "홍길동", "hong@test.com", 30);
-        User savedUser = new User("홍길동", "hong@test.com", 30);
-        savedUser.setId(1L);
+        UserRequest request = new UserRequest(null, "홍길동", "hong@test.com", 30);
+        User savedUser = new User(1L, "홍길동", "hong@test.com", 30);
         given(userRepository.save(any(User.class))).willReturn(savedUser);
 
-        User result = userService.create(dto);
+        UserResponse result = userService.create(request);
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getName()).isEqualTo("홍길동");
@@ -82,13 +80,13 @@ class UserServiceTest {
     @Test
     @DisplayName("사용자 수정")
     void update() {
-        User existingUser = new User("홍길동", "hong@test.com", 30);
-        existingUser.setId(1L);
+        User existingUser = new User(1L, "홍길동", "hong@test.com", 30);
+        User updatedUser = new User(1L, "김철수", "kim@test.com", 25);
         given(userRepository.findById(1L)).willReturn(Optional.of(existingUser));
-        given(userRepository.save(any(User.class))).willReturn(existingUser);
+        given(userRepository.save(any(User.class))).willReturn(updatedUser);
 
-        UserDto dto = new UserDto(null, "김철수", "kim@test.com", 25);
-        User result = userService.update(1L, dto);
+        UserRequest request = new UserRequest(null, "김철수", "kim@test.com", 25);
+        UserResponse result = userService.update(1L, request);
 
         assertThat(result.getName()).isEqualTo("김철수");
         assertThat(result.getEmail()).isEqualTo("kim@test.com");

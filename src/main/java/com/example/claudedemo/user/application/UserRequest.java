@@ -1,4 +1,4 @@
-package com.example.claudedemo.dto;
+package com.example.claudedemo.user.application;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UserRequest {
+
     private Long id;
     private String name;
     private String email;
