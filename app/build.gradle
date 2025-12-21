@@ -1,0 +1,29 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'jacoco'
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':product-module')
+    implementation project(':coupon-module')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    runtimeOnly 'com.oracle.database.jdbc:ojdbc11'
+    testImplementation 'com.h2database:h2'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        html.required = true
+        xml.required = true
+    }
+}

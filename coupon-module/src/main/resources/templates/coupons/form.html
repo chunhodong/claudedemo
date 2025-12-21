@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>쿠폰 등록/수정</title>
+</head>
+<body>
+    <h1>쿠폰 등록/수정</h1>
+    <form th:action="@{${coupon != null ? '/api/coupons/' + coupon.id : '/api/coupons'}}"
+          th:method="${coupon != null ? 'put' : 'post'}" th:object="${coupon}">
+        <div>
+            <label>코드:</label>
+            <input type="text" th:field="*{code}" placeholder="쿠폰 코드를 입력하세요" required/>
+        </div>
+        <div>
+            <label>할인율 (%):</label>
+            <input type="number" th:field="*{discountRate}" min="1" max="100" placeholder="1-100" required/>
+        </div>
+        <div>
+            <label>최대 할인 금액:</label>
+            <input type="number" th:field="*{maxDiscountAmount}" placeholder="최대 할인 금액"/>
+        </div>
+        <div>
+            <label>만료일:</label>
+            <input type="datetime-local" th:field="*{expiryDate}" required/>
+        </div>
+        <div>
+            <label>활성화:</label>
+            <input type="checkbox" th:field="*{isActive}" th:checked="${coupon?.isActive}"/>
+        </div>
+        <button type="submit">저장</button>
+        <a href="/coupons">취소</a>
+    </form>
+</body>
+</html>
