@@ -8,15 +8,17 @@ COPY settings.gradle build.gradle ./
 COPY gradle ./gradle
 COPY gradlew ./
 
-# Copy source code
+# Copy source code (all modules needed for settings.gradle)
 COPY common ./common
+COPY product-module ./product-module
+COPY coupon-module ./coupon-module
 COPY fee-module ./fee-module
 
 # Build the application
 RUN ./gradlew :fee-module:bootJar --no-daemon
 
 # Stage 2: Runtime
-FROM eclipse-temurin:17-jre-alpine
+FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
