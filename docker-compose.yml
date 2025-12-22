@@ -8,13 +8,74 @@ services:
       - "1521:1521"
     environment:
       ORACLE_PASSWORD: oracle123
+      ORACLE_DATABASE: XEPDB1
     volumes:
       - oracle-data:/opt/oracle/oradata
+    networks:
+      - app-network
     healthcheck:
       test: ["CMD", "healthcheck.sh"]
       interval: 30s
       timeout: 10s
       retries: 5
+
+  product-service:
+    build:
+      context: .
+      dockerfile: product-module/Dockerfile
+    container_name: product-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      - SPRING_DATASOURCE_USERNAME=system
+      - SPRING_DATASOURCE_PASSWORD=oracle123
+    networks:
+      - app-network
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  coupon-service:
+    build:
+      context: .
+      dockerfile: coupon-module/Dockerfile
+    container_name: coupon-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      - SPRING_DATASOURCE_USERNAME=system
+      - SPRING_DATASOURCE_PASSWORD=oracle123
+    networks:
+      - app-network
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  fee-service:
+    build:
+      context: .
+      dockerfile: fee-module/Dockerfile
+    container_name: fee-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:oracle:thin:@oracle-db:1521/XEPDB1
+      - SPRING_DATASOURCE_USERNAME=system
+      - SPRING_DATASOURCE_PASSWORD=oracle123
+    networks:
+      - app-network
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    restart: unless-stopped
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   oracle-data:
