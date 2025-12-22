@@ -11,12 +11,12 @@
 
 ### 서비스 목록
 
-| 서비스 | 포트 | 설명 |
-|--------|------|------|
-| oracle-db | 1521 | Oracle Database XE 21c |
-| product-service | 8081 | 상품 관리 API |
-| coupon-service | 8082 | 쿠폰 관리 API |
-| fee-service | 8083 | 수수료 관리 API |
+| 서비스 | Docker 포트 | 로컬 포트 | 설명 |
+|--------|------------|---------|------|
+| oracle-db | 1521 | 1521 | Oracle Database XE 21c |
+| product-service | 18081 | 8081 | 상품 관리 API |
+| coupon-service | 18082 | 8082 | 쿠폰 관리 API |
+| fee-service | 18083 | 8083 | 수수료 관리 API |
 
 ## 실행 방법
 
@@ -52,17 +52,33 @@ docker-compose down -v
 
 ## API 접근
 
-서비스가 실행되면 다음 URL로 접근할 수 있습니다:
+### Docker 환경
+서비스가 Docker로 실행되면 다음 URL로 접근할 수 있습니다:
 
-### Product API
+#### Product API
+- 기본 URL: http://localhost:18081/api/products
+- Swagger UI: http://localhost:18081/swagger-ui/index.html
+
+#### Coupon API
+- 기본 URL: http://localhost:18082/api/coupons
+- Swagger UI: http://localhost:18082/swagger-ui/index.html
+
+#### Fee API
+- 기본 URL: http://localhost:18083/api/fees
+- Swagger UI: http://localhost:18083/swagger-ui/index.html
+
+### 로컬 환경
+로컬에서 실행되면 다음 URL로 접근할 수 있습니다:
+
+#### Product API
 - 기본 URL: http://localhost:8081/api/products
 - Swagger UI: http://localhost:8081/swagger-ui/index.html
 
-### Coupon API
+#### Coupon API
 - 기본 URL: http://localhost:8082/api/coupons
 - Swagger UI: http://localhost:8082/swagger-ui/index.html
 
-### Fee API
+#### Fee API
 - 기본 URL: http://localhost:8083/api/fees
 - Swagger UI: http://localhost:8083/swagger-ui/index.html
 
@@ -100,15 +116,20 @@ docker build -f fee-module/Dockerfile -t fee-service .
 - Oracle DB 초기화에 1-2분 소요될 수 있습니다
 - 서비스들은 DB가 준비될 때까지 자동으로 대기합니다 (`depends_on` 설정)
 
-### 포트 충돌
-만약 로컬에서 이미 같은 포트를 사용 중이라면:
-1. 로컬 서비스를 중지하거나
-2. `docker-compose.yml`에서 포트 번호를 변경하세요
+### 포트 구성
+Docker 서비스는 로컬 실행과 충돌하지 않도록 다른 포트를 사용합니다:
+- **Docker 서비스**: 18081, 18082, 18083 포트로 외부 접근
+- **로컬 실행**: 8081, 8082, 8083 포트 사용 가능
 
-예:
+이를 통해 Docker와 로컬 환경을 **동시에** 실행할 수 있습니다.
+
+예시:
 ```yaml
-ports:
-  - "8081:8081"  # 왼쪽을 변경: "18081:8081"
+# docker-compose.yml
+services:
+  product-service:
+    ports:
+      - "18081:8081"  # 외부:내부 (Docker: 18081, Local: 8081)
 ```
 
 ## 트러블슈팅
