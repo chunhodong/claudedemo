@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication(scanBasePackages = {
-    "com.example.claudedemo.fee",
-    "com.example.claudedemo.common"
+    "com.example.claudeapi.fee",
+    "com.example.claudeapi.common"
 })
 public class FeeApplication {
 
